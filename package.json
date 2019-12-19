@@ -1,0 +1,32 @@
+{
+    "author": {
+        "name": "nhyun.kyung",
+        "email": "edgar.kyung@gmail.com"
+    },
+    "bin": {
+        "ppm": "./main"
+    },
+    "bugs": {
+        "url": "https://github.com/edgarKyung/private-packaging-manager/issues"
+    },
+    "deprecated": false,
+    "description": "Tool for private package module",
+    "homepage": "https://github.com/edgarKyung/private-packaging-manager#readme",
+    "keywords": [
+        "git",
+        "npm",
+        "private",
+        "node_modules"
+    ],
+    "license": "ISC",
+    "name": "private-packaging-manager",
+    "preferGlobal": true,
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/edgarKyung/private-packaging-manager.git"
+    },
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "version": "0.1.0"
+}

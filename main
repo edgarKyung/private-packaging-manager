@@ -1,0 +1,44 @@
+#!/usr/bin/env node
+
+const packageManager = require('./package_manager');
+
+// console.log('', stringToMakeYellow);
+
+function usage() {
+    console.log(`
+        ppm install
+        ppm add [\x1b[33m Module Name \x1b[0m] [\x1b[33m Module Repository \x1b[0m]
+        ppm remove [\x1b[33m Module Name \x1b[0m]
+        ppm clean
+    `);
+}
+
+switch (process.argv[2]) {
+    case "install":
+        packageManager.install();
+        break;
+
+    case "add":
+        if (process.argv[3] && process.argv[4]) {
+            packageManager.add(process.argv[3], process.argv[4]);
+        } else {
+            usage();
+        }
+        break;
+
+    case "remove":
+        if (process.argv[3]) {
+            packageManager.remove(process.argv[3]);
+        } else {
+            usage();
+        }
+        break;
+
+    case "clean":
+        packageManager.clean();
+        break;
+
+    default:
+        usage();
+        break;
+}
