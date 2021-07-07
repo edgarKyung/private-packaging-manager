@@ -7,8 +7,8 @@ const packageManager = require('./package_manager');
 function usage() {
     console.log(`
         ppm install
-        ppm add [\x1b[33m Module Name \x1b[0m] [\x1b[33m Module Repository \x1b[0m]
-        ppm remove [\x1b[33m Module Name \x1b[0m]
+        ppm add [\x1b[33m Module Destination \x1b[0m] [\x1b[33m Module Repository \x1b[0m]
+        ppm remove [\x1b[33m Module Destination \x1b[0m]
         ppm clean
     `);
 }

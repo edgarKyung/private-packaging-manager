@@ -14,24 +14,24 @@ function printMessage(message) {
 }
 
 async function install() {
-    try {
-        spinner.start('Installing NPM Modules');
-        const npmResult = await execPromise('npm install');
-        spinner.stop(' Finish');
-        printMessage(`${npmResult.stderr}${npmResult.stdout}`);
-    } catch (e) {
-        spinner.stop(' Finish');
-        printMessage(`${e}`);
-    }
+    // try {
+    //     spinner.start('Installing NPM Modules');
+    //     const npmResult = await execPromise('npm install');
+    //     spinner.stop(' Finish');
+    //     printMessage(`${npmResult.stderr}${npmResult.stdout}`);
+    // } catch (e) {
+    //     spinner.stop(' Finish');
+    //     printMessage(`${e}`);
+    // }
 
     const packageJson = require(path.join(process.cwd(), 'package.json'));
     const ppmList = packageJson.ppm;
     for (const property in ppmList) {
-        const name = property;
+        const destination = property;
         const repository = ppmList[property];
         try {
-            spinner.start(`Installing ${name} Module`);
-            const ppmResult = await execPromise(`git clone ${repository} node_modules/${name}`);
+            spinner.start(`Installing ${destination} Module`);
+            const ppmResult = await execPromise(`git clone ${repository} ${destination} && cd ${destination} && npm install`);
             spinner.stop(' Finish');
             printMessage(`${ppmResult.stderr}${ppmResult.stdout}`);
         } catch (e) {
@@ -41,15 +41,15 @@ async function install() {
     }
 }
 
-async function add(name, repository) {
+async function add(destination, repository) {
     const packagePath = path.join(process.cwd(), 'package.json');
     const packageJson = require(packagePath);
     packageJson.ppm = packageJson.ppm || {};
-    if (packageJson.ppm[name] === undefined) {
-        packageJson.ppm[name] = repository;
+    if (packageJson.ppm[destination] === undefined) {
+        packageJson.ppm[destination] = repository;
         try {
-            spinner.start(`Installing ${name} Module`);
-            const ppmResult = await execPromise(`git clone ${repository} node_modules/${name}`);
+            spinner.start(`Installing ${destination} Module`);
+            const ppmResult = await execPromise(`git clone ${repository} ${destination} && cd ${destination} && npm install`);
             fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 4));
             spinner.stop(' Finish');
             printMessage(`${ppmResult.stderr}${ppmResult.stdout}`);
@@ -58,18 +58,21 @@ async function add(name, repository) {
             printMessage(`${e}`);
         }
     } else {
-        printMessage(`${name} Module is already exist`);
+        printMessage(`${destination} Module is already exist`);
     }
 }
 
-async function remove(name) {
+async function remove(destination) {
     const packagePath = path.join(process.cwd(), 'package.json');
     const packageJson = require(packagePath);
-    if (packageJson.ppm[name]) {
+    if (packageJson.ppm[destination]) {
         try {
-            spinner.start(`Removing ${name}`);
-            await execPromise(`cmd /c if exist node_modules\\${name} (rmdir /s /q node_modules\\${name})`);
-            delete packageJson.ppm[name];
+            spinner.start(`Removing ${destination}`);
+            await execPromise(`cmd /c if exist ${destination} (rmdir /s /q ${destination.split('/').join('\\')})`);
+            delete packageJson.ppm[destination];
+            if (Object.keys(packageJson.ppm).length === 0) {
+                delete packageJson.ppm;
+            }
             fs.writeFileSync(packagePath, JSON.stringify(packageJson, null, 4));
             spinner.stop(' Finish');
         } catch (e) {
@@ -77,18 +80,25 @@ async function remove(name) {
             printMessage(`${e}`);
         }
     } else {
-        printMessage(`${name} Module is not exist`);
+        printMessage(`${destination} Module is not exist`);
     }
 }
 
 async function clean() {
-    try {
-        spinner.start('Removing node_modules');
-        await execPromise('cmd /c if exist node_modules (rmdir /s /q node_modules)');
-        spinner.stop(' Finish');
-    } catch (e) {
-        spinner.stop(' Finish');
-        printMessage(`${e}`);
+    const packageJson = require(path.join(process.cwd(), 'package.json'));
+    const ppmList = packageJson.ppm;
+    for (const property in ppmList) {
+        const destination = property;
+        const repository = ppmList[property];
+        try {
+            spinner.start(`Removing ${destination} Module`);
+            const ppmResult = await execPromise(`cmd /c if exist ${destination} (rmdir /s /q ${destination.split('/').join('\\')})`);
+            spinner.stop(' Finish');
+            printMessage(`${ppmResult.stderr}${ppmResult.stdout}`);
+        } catch (e) {
+            spinner.stop(' Finish');
+            printMessage(`${e}`);
+        }
     }
 }
 
